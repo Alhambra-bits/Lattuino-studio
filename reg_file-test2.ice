@@ -102,7 +102,7 @@
             "virtual": false
           },
           "position": {
-            "x": 896,
+            "x": 712,
             "y": 88
           }
         },
@@ -249,46 +249,6 @@
           }
         },
         {
-          "id": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
-          "type": "basic.code",
-          "data": {
-            "code": "\nreg [7:0] _o;\n\nalways @(*) begin\n    case(sel)\n        0: _o = i0;\n        1: _o = i1;\n        default: _o = i0;\n    endcase\nend\n\nassign o = _o;\n",
-            "params": [],
-            "ports": {
-              "in": [
-                {
-                  "name": "i0",
-                  "range": "[7:0]",
-                  "size": 8
-                },
-                {
-                  "name": "i1",
-                  "range": "[7:0]",
-                  "size": 8
-                },
-                {
-                  "name": "sel"
-                }
-              ],
-              "out": [
-                {
-                  "name": "o",
-                  "range": "[7:0]",
-                  "size": 8
-                }
-              ]
-            }
-          },
-          "position": {
-            "x": 528,
-            "y": 120
-          },
-          "size": {
-            "width": 272,
-            "height": 224
-          }
-        },
-        {
           "id": "e046254c-f464-4da9-b629-eca71299bc51",
           "type": "basic.info",
           "data": {
@@ -302,6 +262,18 @@
           "size": {
             "width": 560,
             "height": 272
+          }
+        },
+        {
+          "id": "f4cc8539-cc5b-441e-a124-942bde175a59",
+          "type": "a3907244fb39eb2d7478babc28ac754c5d4b9a29",
+          "position": {
+            "x": 464,
+            "y": 184
+          },
+          "size": {
+            "width": 96,
+            "height": 96
           }
         }
       ],
@@ -391,12 +363,12 @@
             "port": "rd_o"
           },
           "target": {
-            "block": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
-            "port": "i0"
+            "block": "f4cc8539-cc5b-441e-a124-942bde175a59",
+            "port": "2257c1d2-f4ca-4e36-a52d-4c1d36b13486"
           },
           "vertices": [
             {
-              "x": 376,
+              "x": 368,
               "y": 72
             }
           ],
@@ -408,26 +380,15 @@
             "port": "rr_o"
           },
           "target": {
-            "block": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
-            "port": "i1"
+            "block": "f4cc8539-cc5b-441e-a124-942bde175a59",
+            "port": "9fa06e30-3244-4096-9758-df8766807d53"
           },
           "vertices": [
             {
-              "x": 376,
-              "y": 368
+              "x": 368,
+              "y": 296
             }
           ],
-          "size": 8
-        },
-        {
-          "source": {
-            "block": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
-            "port": "o"
-          },
-          "target": {
-            "block": "1f74cf56-0106-4ef3-88bd-88ebf424b518",
-            "port": "in"
-          },
           "size": 8
         },
         {
@@ -436,9 +397,20 @@
             "port": "out"
           },
           "target": {
-            "block": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
-            "port": "sel"
+            "block": "f4cc8539-cc5b-441e-a124-942bde175a59",
+            "port": "1e637a79-4a6d-495c-bcac-9664bdbe4b94"
           }
+        },
+        {
+          "source": {
+            "block": "f4cc8539-cc5b-441e-a124-942bde175a59",
+            "port": "959ad4e8-c311-429c-ab8c-d87025928b23"
+          },
+          "target": {
+            "block": "1f74cf56-0106-4ef3-88bd-88ebf424b518",
+            "port": "in"
+          },
+          "size": 8
         }
       ]
     },
@@ -1604,6 +1576,166 @@
           "pan": {
             "x": 0,
             "y": -1
+          },
+          "zoom": 1
+        }
+      }
+    },
+    "a3907244fb39eb2d7478babc28ac754c5d4b9a29": {
+      "package": {
+        "name": "Mux 2 a 1 (8bits)",
+        "version": "0.0.1",
+        "description": "Multiplexor de 2 a 1 de buses de 8 bits",
+        "author": "Juan Gonzalez-Gomez (obijuan)",
+        "image": "%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2291.208%22%20height=%22126.018%22%20viewBox=%220%200%2085.507537%20118.14196%22%3E%3Cpath%20d=%22M67.175%2039.767c0-7.135-3.893-13.724-10.206-17.275a20.674%2020.674%200%200%200-20.365.079c-6.284%203.6-10.124%2010.22-10.066%2017.354v41.836c-.058%207.135%203.782%2013.754%2010.066%2017.354a20.674%2020.674%200%200%200%2020.365.08c6.313-3.551%2010.206-10.14%2010.206-17.276z%22%20fill=%22none%22%20stroke=%22#00f%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Ctext%20style=%22line-height:125%25%22%20x=%2235.08%22%20y=%2248.665%22%20font-weight=%22400%22%20font-size=%2218.75%22%20font-family=%22sans-serif%22%20letter-spacing=%220%22%20word-spacing=%220%22%3E%3Ctspan%20x=%2235.08%22%20y=%2248.665%22%3E0%3C/tspan%3E%3C/text%3E%3Ctext%20style=%22line-height:125%25%22%20x=%2234.022%22%20y=%2285.257%22%20font-weight=%22400%22%20font-size=%2218.75%22%20font-family=%22sans-serif%22%20letter-spacing=%220%22%20word-spacing=%220%22%3E%3Ctspan%20x=%2234.022%22%20y=%2285.257%22%3E1%3C/tspan%3E%3C/text%3E%3Ctext%20style=%22line-height:125%25%22%20x=%2226.122%22%20y=%2213.669%22%20font-weight=%22400%22%20font-size=%2218.75%22%20font-family=%22sans-serif%22%20letter-spacing=%220%22%20word-spacing=%220%22%3E%3Ctspan%20x=%2226.122%22%20y=%2213.669%22%3EMux%3C/tspan%3E%3C/text%3E%3Cpath%20d=%22M26.626%2042.397H1.93M26.626%2078.18H1.93M47.29%20102.12v14.616H1.426M67.45%2058.524H84.08%22%20fill=%22none%22%20stroke=%22#00f%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3C/svg%3E"
+      },
+      "design": {
+        "graph": {
+          "blocks": [
+            {
+              "id": "2257c1d2-f4ca-4e36-a52d-4c1d36b13486",
+              "type": "basic.input",
+              "data": {
+                "name": "i0",
+                "range": "[7:0]",
+                "clock": false,
+                "size": 8
+              },
+              "position": {
+                "x": -704,
+                "y": -88
+              }
+            },
+            {
+              "id": "9fa06e30-3244-4096-9758-df8766807d53",
+              "type": "basic.input",
+              "data": {
+                "name": "i1",
+                "range": "[7:0]",
+                "clock": false,
+                "size": 8
+              },
+              "position": {
+                "x": -704,
+                "y": 0
+              }
+            },
+            {
+              "id": "959ad4e8-c311-429c-ab8c-d87025928b23",
+              "type": "basic.output",
+              "data": {
+                "name": "o",
+                "range": "[7:0]",
+                "size": 8
+              },
+              "position": {
+                "x": -48,
+                "y": 0
+              }
+            },
+            {
+              "id": "1e637a79-4a6d-495c-bcac-9664bdbe4b94",
+              "type": "basic.input",
+              "data": {
+                "name": "sel",
+                "clock": false
+              },
+              "position": {
+                "x": -704,
+                "y": 88
+              }
+            },
+            {
+              "id": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
+              "type": "basic.code",
+              "data": {
+                "code": "//-- Multiplexor de 2 a 1, \n//-- de 8 bits\n\nreg [7:0] _o;\n\nalways @(*) begin\n    case(sel)\n        0: _o = i0;\n        1: _o = i1;\n        default: _o = i0;\n    endcase\nend\n\nassign o = _o;\n",
+                "params": [],
+                "ports": {
+                  "in": [
+                    {
+                      "name": "i0",
+                      "range": "[7:0]",
+                      "size": 8
+                    },
+                    {
+                      "name": "i1",
+                      "range": "[7:0]",
+                      "size": 8
+                    },
+                    {
+                      "name": "sel"
+                    }
+                  ],
+                  "out": [
+                    {
+                      "name": "o",
+                      "range": "[7:0]",
+                      "size": 8
+                    }
+                  ]
+                }
+              },
+              "position": {
+                "x": -464,
+                "y": -104
+              },
+              "size": {
+                "width": 304,
+                "height": 272
+              }
+            }
+          ],
+          "wires": [
+            {
+              "source": {
+                "block": "2257c1d2-f4ca-4e36-a52d-4c1d36b13486",
+                "port": "out"
+              },
+              "target": {
+                "block": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
+                "port": "i0"
+              },
+              "size": 8
+            },
+            {
+              "source": {
+                "block": "9fa06e30-3244-4096-9758-df8766807d53",
+                "port": "out"
+              },
+              "target": {
+                "block": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
+                "port": "i1"
+              },
+              "size": 8
+            },
+            {
+              "source": {
+                "block": "1e637a79-4a6d-495c-bcac-9664bdbe4b94",
+                "port": "out"
+              },
+              "target": {
+                "block": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
+                "port": "sel"
+              }
+            },
+            {
+              "source": {
+                "block": "34e6d77b-15a8-4b7c-8c41-09e9b8d4d2be",
+                "port": "o"
+              },
+              "target": {
+                "block": "959ad4e8-c311-429c-ab8c-d87025928b23",
+                "port": "in"
+              },
+              "size": 8
+            }
+          ]
+        },
+        "state": {
+          "pan": {
+            "x": 1113.0703,
+            "y": 329.5
           },
           "zoom": 1
         }
