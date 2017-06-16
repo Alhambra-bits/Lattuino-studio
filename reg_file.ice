@@ -12,72 +12,6 @@
     "graph": {
       "blocks": [
         {
-          "id": "edcb9e77-3866-4a75-9552-f99675a0e932",
-          "type": "basic.code",
-          "data": {
-            "code": "//----------------------------------------------------------\n//--  Registers File\n//--\n//--  Dual-port memory: (Read-first)\n//--  * Port A    \n//--    - 8 bits R/W\n//--    - 16 bits R/W\n//--  * Port B\n//--    - 8 bits R\n//----------------------------------------------------------\n\nreg [7:0] ram_0 [0:15];  //-- Even\nreg [7:0] ram_1 [0:15];  //-- Odd\n\nwire [3:0] adr16;\nreg  [3:0] adr16_r = 4'h0;\nreg adr_lsb_r = 1'b0;\n\nwire we0, we1;\nwire [7:0] r0i;\nwire [7:0] r1i;\n\n//-- PortB signals\nwire [3:0] adr16B;\nreg [3:0] adr16B_r;\nreg adr_lsbB_r;\n\n\n//-- Address for 16x16 registers\nassign adr16 = rd_adr_i[4:1];\nassign adr16B = rr_adr_i[4:1];\n\n//-- Decode which RAM/s will have WE asserted\nassign we0 = rd16_we_i==1 || (rd_we_i==1 && rd_adr_i[0]==0) ? 1 : 0;\nassign we1 = rd16_we_i==1 || (rd_we_i==1 && rd_adr_i[0]==1) ? 1 : 0;\n\n//-- Muxes for 16/8 bits writes \nassign r0i = rd16_we_i==1 ? rd16_i[7:0]  : rd_i;\nassign r1i = rd16_we_i==1 ? rd16_i[15:0] : rd_i;\n\n\n//-- Register the addresses\nalways @(posedge clk_i) begin\n  adr16_r <= adr16;\n  adr_lsb_r <= rd_adr_i[0];\n  adr16B_r <= adr16B;\n  adr_lsbB_r <= rr_adr_i[0];\nend\n\n//-- Writing\nalways @(posedge clk_i) begin\n  if (we0) \n    ram_0[adr16] <= r0i;\n \n  if (we1) \n    ram_1[adr16] <= r1i;\n \nend\n\n//-- Reading\nassign rd_o = adr_lsb_r  ? ram_1[adr16_r] : ram_0[adr16_r];\nassign rd16_o = {ram_1[adr16_r], ram_0[adr16_r]};\nassign rr_o = adr_lsbB_r ? ram_1[adr16B_r] : ram_0[adr16B_r];\n\n//-- Initial register file contents\n//-- Change them for debugging\n  initial begin\n    ram_1[0] = 8'hC0; ram_0[0] = 8'h80;\n    ram_1[1] = 8'hC1; ram_0[1] = 8'h81;\n    ram_1[2] = 8'hC2; ram_0[2] = 8'h82;\n    ram_1[3] = 8'hC3; ram_0[3] = 8'h83;\n    \n    ram_1[4] = 8'hC4; ram_0[4] = 8'h84;\n    ram_1[5] = 8'hC5; ram_0[5] = 8'h85;\n    ram_1[6] = 8'hC6; ram_0[6] = 8'h86;\n    ram_1[7] = 8'hC7; ram_0[7] = 8'h87;\n    \n    ram_1[8] = 8'hC8; ram_0[8] = 8'h88;\n    ram_1[9] = 8'hC9; ram_0[9] = 8'h89;\n    ram_1[10] = 8'hCA; ram_0[10] = 8'h8A;\n    ram_1[11] = 8'hCB; ram_0[11] = 8'h8B;\n    \n    ram_1[12] = 8'hCC; ram_0[12] = 8'h8C;\n    ram_1[13] = 8'hCD; ram_0[13] = 8'h8D;\n    ram_1[14] = 8'hCE; ram_0[14] = 8'h8E;\n    ram_1[15] = 8'hCF; ram_0[15] = 8'h8F;\n   end\n",
-            "params": [],
-            "ports": {
-              "in": [
-                {
-                  "name": "clk_i"
-                },
-                {
-                  "name": "rd_we_i"
-                },
-                {
-                  "name": "rd_adr_i",
-                  "range": "[4:0]",
-                  "size": 5
-                },
-                {
-                  "name": "rd_i",
-                  "range": "[7:0]",
-                  "size": 8
-                },
-                {
-                  "name": "rd16_we_i"
-                },
-                {
-                  "name": "rd16_i",
-                  "range": "[15:0]",
-                  "size": 16
-                },
-                {
-                  "name": "rr_adr_i",
-                  "range": "[4:0]",
-                  "size": 5
-                }
-              ],
-              "out": [
-                {
-                  "name": "rd_o",
-                  "range": "[7:0]",
-                  "size": 8
-                },
-                {
-                  "name": "rd16_o",
-                  "range": "[15:0]",
-                  "size": 16
-                },
-                {
-                  "name": "rr_o",
-                  "range": "[7:0]",
-                  "size": 8
-                }
-              ]
-            }
-          },
-          "position": {
-            "x": -440,
-            "y": -256
-          },
-          "size": {
-            "width": 688,
-            "height": 944
-          }
-        },
-        {
           "id": "1f74cf56-0106-4ef3-88bd-88ebf424b518",
           "type": "basic.output",
           "data": {
@@ -153,10 +87,96 @@
           }
         },
         {
-          "id": "81748065-a1be-4cb5-afe1-4c32d575dc68",
+          "id": "9d5fba98-6fcf-4280-b374-4ededdb8d8da",
+          "type": "basic.input",
+          "data": {
+            "name": "Pulsador",
+            "pins": [
+              {
+                "index": "0",
+                "name": "SW1",
+                "value": "10"
+              }
+            ],
+            "virtual": false,
+            "clock": false
+          },
+          "position": {
+            "x": -1128,
+            "y": 80
+          }
+        },
+        {
+          "id": "edcb9e77-3866-4a75-9552-f99675a0e932",
+          "type": "basic.code",
+          "data": {
+            "code": "//----------------------------------------------------------\n//--  Registers File\n//--\n//--  Dual-port memory: (Read-first)\n//--  * Port A    \n//--    - 8 bits R/W\n//--    - 16 bits R/W\n//--  * Port B\n//--    - 8 bits R\n//----------------------------------------------------------\n\nreg [7:0] ram_0[0:15]; // Even\nreg [7:0] ram_1[0:15]; // Odd\n// Port used to read Rr\nreg [7:0] ramB_0[0:15]; // Even\nreg [7:0] ramB_1[0:15]; // Odd\n\nwire [3:0] adr16;\nreg  [3:0] adr16_r;\nreg        adr_lsb_r;\nwire [3:0] adr16B;\nreg  [3:0] adr16B_r;\nreg        adr_lsbB_r;\nwire       we0, we1;\nwire [7:0] r0i;\nwire [7:0] r1i;\n\n// Address for 16x16 registers\nassign adr16 =rd_adr_i[4:1];\nassign adr16B=rr_adr_i[4:1];\n// Decode which RAM/s will have WE asserted\nassign we0=rd16_we_i || (rd_we_i && !rd_adr_i[0]);\nassign we1=rd16_we_i || (rd_we_i &&  rd_adr_i[0]);\n// Muxes for 16/8 bits writes\nassign r0i=rd16_we_i ? rd16_i[ 7:0] : rd_i;\nassign r1i=rd16_we_i ? rd16_i[15:8] : rd_i;\n\nalways @(posedge clk_i)\nbegin : do_mem\n  if (we0)\n     begin\n     ram_0[adr16]  <= r0i;\n     // Mirror\n     ramB_0[adr16] <= r0i;\n     end\n  if (we1)\n     begin\n     ram_1[adr16]  <= r1i;\n     // Mirror\n     ramB_1[adr16] <= r1i;\n     end\n  adr16_r    <= adr16;\n  adr_lsb_r  <= rd_adr_i[0];\n  // Secondary read port\n  adr16B_r   <= adr16B;\n  adr_lsbB_r <= rr_adr_i[0];\nend // do_mem\n\nassign rd16_o={ram_1[adr16_r],ram_0[adr16_r]};\nassign rd_o=adr_lsb_r ? ram_1[adr16_r] : ram_0[adr16_r];\n// Secondary read port\nassign rr_o=adr_lsbB_r ? ramB_1[adr16B_r] : ramB_0[adr16B_r];\n\n//-- Initial register file contents\n//-- Change them for debugging\n  initial begin\n  \n    //-- Even block     //-- Odd BLOCK\n  \n    ram_0[0] = 8'h80; ram_1[0] = 8'h81;\n    ram_0[1] = 8'h82; ram_1[1] = 8'h83;\n    ram_0[2] = 8'h84; ram_1[2] = 8'h85;\n    ram_0[3] = 8'h86; ram_1[3] = 8'h87;\n    \n    ram_0[4] = 8'h88; ram_1[4] = 8'h89;\n    ram_0[5] = 8'h8A; ram_1[5] = 8'h8B;\n    ram_0[6] = 8'h8C; ram_1[6] = 8'h8D;\n    ram_0[7] = 8'h8E; ram_1[7] = 8'h8F;\n    \n    ram_0[8] = 8'h90; ram_1[8] = 8'h91;\n    ram_0[9] = 8'h92; ram_1[9] = 8'h93;\n    ram_0[10] = 8'h94; ram_1[10] = 8'h95;\n    ram_0[11] = 8'h96; ram_1[11] = 8'h97;\n    \n    ram_0[12] = 8'h98; ram_1[12] = 8'h99;\n    ram_0[13] = 8'h9A; ram_1[13] = 8'h9B;\n    ram_0[14] = 8'h9C; ram_1[14] = 8'h9D;\n    ram_0[15] = 8'h9E; ram_1[15] = 8'h9F;\n    \n   end\n",
+            "params": [],
+            "ports": {
+              "in": [
+                {
+                  "name": "clk_i"
+                },
+                {
+                  "name": "rd_we_i"
+                },
+                {
+                  "name": "rd_adr_i",
+                  "range": "[4:0]",
+                  "size": 5
+                },
+                {
+                  "name": "rd_i",
+                  "range": "[7:0]",
+                  "size": 8
+                },
+                {
+                  "name": "rd16_we_i"
+                },
+                {
+                  "name": "rd16_i",
+                  "range": "[15:0]",
+                  "size": 16
+                },
+                {
+                  "name": "rr_adr_i",
+                  "range": "[4:0]",
+                  "size": 5
+                }
+              ],
+              "out": [
+                {
+                  "name": "rd_o",
+                  "range": "[7:0]",
+                  "size": 8
+                },
+                {
+                  "name": "rd16_o",
+                  "range": "[15:0]",
+                  "size": 16
+                },
+                {
+                  "name": "rr_o",
+                  "range": "[7:0]",
+                  "size": 8
+                }
+              ]
+            }
+          },
+          "position": {
+            "x": -440,
+            "y": -256
+          },
+          "size": {
+            "width": 688,
+            "height": 944
+          }
+        },
+        {
+          "id": "7cb9079a-c372-438a-87b4-00fb8e526f9f",
           "type": "a6eb6cd34f8e0bc2cb97084941e04dbb8957934a",
           "position": {
-            "x": -744,
+            "x": -688,
             "y": 48
           },
           "size": {
@@ -165,11 +185,11 @@
           }
         },
         {
-          "id": "4dd0efca-366a-4c93-9f20-1d01fc141f8b",
-          "type": "8c5d8b238a335255daad3b21ec5bab77132f809e",
+          "id": "0a75a42e-e4ce-4468-8caf-468edc2614f7",
+          "type": "d3ec3e54382a180944492da9d34569a122cba71c",
           "position": {
-            "x": -1120,
-            "y": 200
+            "x": -920,
+            "y": 64
           },
           "size": {
             "width": 96,
@@ -177,39 +197,19 @@
           }
         },
         {
-          "id": "24d68652-60cb-4864-9835-a862c8b04377",
-          "type": "7f3e9f0a05c929c3761852e259027fbe8e977795",
+          "id": "0a3dfd4a-5247-47aa-9e6b-84dab5c5e017",
+          "type": "basic.info",
+          "data": {
+            "info": "Prueba del banco de registros del AVR\n\nTEST 3:  Lectura de los 32 registros del puerto A.\nSe muestran por los leds de la icezum alhambra\nSe usa un contador con enable \n(Para cumplir con las reglas de diseño síncrono)\nMODO Manual. Para incrementar la dirección hay que apretar \nel pulsador SW1",
+            "readonly": false
+          },
           "position": {
-            "x": -976,
-            "y": 200
+            "x": -1152,
+            "y": 280
           },
           "size": {
-            "width": 96,
-            "height": 64
-          }
-        },
-        {
-          "id": "d33e4ddc-dbcd-473d-8dd8-4f65137f5c58",
-          "type": "b8ea79bbff55bda252ba410f1d9d84175e318b5b",
-          "position": {
-            "x": -816,
-            "y": 216
-          },
-          "size": {
-            "width": 96,
-            "height": 64
-          }
-        },
-        {
-          "id": "421e8d8e-9c59-4231-a6c8-27a2c6708207",
-          "type": "7c0ae704fe4f7176c6e19f8639bc59e42c836297",
-          "position": {
-            "x": -1288,
-            "y": 256
-          },
-          "size": {
-            "width": 96,
-            "height": 64
+            "width": 560,
+            "height": 272
           }
         }
       ],
@@ -237,7 +237,7 @@
         },
         {
           "source": {
-            "block": "81748065-a1be-4cb5-afe1-4c32d575dc68",
+            "block": "7cb9079a-c372-438a-87b4-00fb8e526f9f",
             "port": "2ce52369-b09a-43f5-8a5a-fbb9ce52918a"
           },
           "target": {
@@ -248,66 +248,30 @@
         },
         {
           "source": {
-            "block": "421e8d8e-9c59-4231-a6c8-27a2c6708207",
-            "port": "7e07d449-6475-4839-b43e-8aead8be2aac"
+            "block": "0a75a42e-e4ce-4468-8caf-468edc2614f7",
+            "port": "ca09a156-6c00-44f0-9f05-b6f883094cc8"
           },
           "target": {
-            "block": "4dd0efca-366a-4c93-9f20-1d01fc141f8b",
-            "port": "78ec5b41-e94f-4892-a7c5-42f2b4970c1b"
-          }
-        },
-        {
-          "source": {
-            "block": "4dd0efca-366a-4c93-9f20-1d01fc141f8b",
-            "port": "f164a06d-b8e3-480d-b351-5d7d1e7ae3a2"
-          },
-          "target": {
-            "block": "24d68652-60cb-4864-9835-a862c8b04377",
-            "port": "18c2ebc7-5152-439c-9b3f-851c59bac834"
-          }
-        },
-        {
-          "source": {
-            "block": "24d68652-60cb-4864-9835-a862c8b04377",
-            "port": "664caf9e-5f40-4df4-800a-b626af702e62"
-          },
-          "target": {
-            "block": "d33e4ddc-dbcd-473d-8dd8-4f65137f5c58",
-            "port": "18c2ebc7-5152-439c-9b3f-851c59bac834"
-          }
-        },
-        {
-          "source": {
-            "block": "421e8d8e-9c59-4231-a6c8-27a2c6708207",
-            "port": "7e07d449-6475-4839-b43e-8aead8be2aac"
-          },
-          "target": {
-            "block": "d33e4ddc-dbcd-473d-8dd8-4f65137f5c58",
-            "port": "97b51945-d716-4b6c-9db9-970d08541249"
-          }
-        },
-        {
-          "source": {
-            "block": "d33e4ddc-dbcd-473d-8dd8-4f65137f5c58",
-            "port": "664caf9e-5f40-4df4-800a-b626af702e62"
-          },
-          "target": {
-            "block": "81748065-a1be-4cb5-afe1-4c32d575dc68",
+            "block": "7cb9079a-c372-438a-87b4-00fb8e526f9f",
             "port": "9e6ba7aa-a106-46c1-98e2-b8de7e5dd8ac"
+          }
+        },
+        {
+          "source": {
+            "block": "9d5fba98-6fcf-4280-b374-4ededdb8d8da",
+            "port": "out"
           },
-          "vertices": [
-            {
-              "x": -744,
-              "y": 168
-            }
-          ]
+          "target": {
+            "block": "0a75a42e-e4ce-4468-8caf-468edc2614f7",
+            "port": "30bde887-830b-4c29-aa25-b5f457ef70e4"
+          }
         }
       ]
     },
     "state": {
       "pan": {
-        "x": 1357.5424,
-        "y": 256.4576
+        "x": 1181.9237,
+        "y": 279.4576
       },
       "zoom": 0.9354
     }
@@ -433,6 +397,335 @@
           "pan": {
             "x": 479.5,
             "y": 257.5
+          },
+          "zoom": 1
+        }
+      }
+    },
+    "d3ec3e54382a180944492da9d34569a122cba71c": {
+      "package": {
+        "name": "Pulsador-P",
+        "version": "0.0.1",
+        "description": "Generacion de pulsos de 1 periodo con un pulsador",
+        "author": "Juan Gonzalez-Gomez (Obijuan)",
+        "image": "%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22134.079%22%20height=%2241.551%22%20viewBox=%220%200%20125.6999%2038.953771%22%3E%3Cpath%20d=%22M1.426%2031.653h24.485M31.776%2031.477a6.088%206.263%200%200%201-6.262%206.068%206.088%206.263%200%200%201-5.908-6.432%206.088%206.263%200%200%201%206.242-6.089%206.088%206.263%200%200%201%205.93%206.412M86.113%2031.653H60.62%22%20fill=%22#00f%22%20stroke=%22#00f%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22bevel%22/%3E%3Crect%20width=%2245.909%22%20height=%227.092%22%20x=%2221.278%22%20y=%227.812%22%20ry=%220%22%20fill=%22#00f%22%20stroke=%22#00f%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22/%3E%3Cpath%20fill=%22#00f%22%20stroke=%22#00f%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20d=%22M35.154%201.406h18.522v4.536H35.154z%22/%3E%3Cpath%20d=%22M68.568%2031.477a6.088%206.263%200%200%201-6.262%206.068%206.088%206.263%200%200%201-5.908-6.432%206.088%206.263%200%200%201%206.242-6.089%206.088%206.263%200%200%201%205.929%206.412%22%20fill=%22#00f%22%20stroke=%22#00f%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22bevel%22/%3E%3Cpath%20d=%22M97.424%2030.703h10.205V3.712h7.952v27.032h8.693%22%20fill=%22none%22%20stroke=%22#000%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22bevel%22/%3E%3C/svg%3E"
+      },
+      "design": {
+        "graph": {
+          "blocks": [
+            {
+              "id": "cfa82d73-d1ad-4796-8096-c5d7ead79ffc",
+              "type": "basic.input",
+              "data": {
+                "name": "",
+                "clock": true
+              },
+              "position": {
+                "x": 96,
+                "y": 136
+              }
+            },
+            {
+              "id": "33da1921-0009-451c-a056-a22e771767c3",
+              "type": "29c50d941d483951811f3b7835214753fda61a0d",
+              "position": {
+                "x": 456,
+                "y": 208
+              },
+              "size": {
+                "width": 96,
+                "height": 64
+              }
+            },
+            {
+              "id": "ca09a156-6c00-44f0-9f05-b6f883094cc8",
+              "type": "basic.output",
+              "data": {
+                "name": ""
+              },
+              "position": {
+                "x": 608,
+                "y": 208
+              }
+            },
+            {
+              "id": "2504129b-94b4-4e52-ab62-461f8ff11493",
+              "type": "10d93310e23daeea6814d2c785127dcb17e7527b",
+              "position": {
+                "x": 296,
+                "y": 224
+              },
+              "size": {
+                "width": 96,
+                "height": 64
+              }
+            },
+            {
+              "id": "30bde887-830b-4c29-aa25-b5f457ef70e4",
+              "type": "basic.input",
+              "data": {
+                "name": "",
+                "clock": false
+              },
+              "position": {
+                "x": 96,
+                "y": 240
+              }
+            },
+            {
+              "id": "e1ebf38b-3153-4eaf-a4fa-ec2495a7baaf",
+              "type": "basic.info",
+              "data": {
+                "info": "Procesamiento para el pulsador:\n\n1) Eliminar rebotes\n2) Generar un pulso de 1 periodo de reloj",
+                "readonly": false
+              },
+              "position": {
+                "x": 136,
+                "y": 328
+              },
+              "size": {
+                "width": 496,
+                "height": 128
+              }
+            }
+          ],
+          "wires": [
+            {
+              "source": {
+                "block": "2504129b-94b4-4e52-ab62-461f8ff11493",
+                "port": "22ff3fa1-943b-4d1a-bd89-36e1c054d077"
+              },
+              "target": {
+                "block": "33da1921-0009-451c-a056-a22e771767c3",
+                "port": "cc75f6b5-2f93-4c56-b3cf-f20192fc91de"
+              },
+              "vertices": []
+            },
+            {
+              "source": {
+                "block": "33da1921-0009-451c-a056-a22e771767c3",
+                "port": "45e071c8-0736-4cc7-a166-d26e77775d33"
+              },
+              "target": {
+                "block": "ca09a156-6c00-44f0-9f05-b6f883094cc8",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "30bde887-830b-4c29-aa25-b5f457ef70e4",
+                "port": "out"
+              },
+              "target": {
+                "block": "2504129b-94b4-4e52-ab62-461f8ff11493",
+                "port": "c9e1af2a-6f09-4cf6-a5b3-fdf7ec2c6530"
+              }
+            },
+            {
+              "source": {
+                "block": "cfa82d73-d1ad-4796-8096-c5d7ead79ffc",
+                "port": "out"
+              },
+              "target": {
+                "block": "2504129b-94b4-4e52-ab62-461f8ff11493",
+                "port": "4bf41c17-a2da-4140-95f7-2a80d51b1e1a"
+              }
+            },
+            {
+              "source": {
+                "block": "cfa82d73-d1ad-4796-8096-c5d7ead79ffc",
+                "port": "out"
+              },
+              "target": {
+                "block": "33da1921-0009-451c-a056-a22e771767c3",
+                "port": "e03aebf8-d678-4fb6-85d0-f432d1088579"
+              }
+            }
+          ]
+        },
+        "state": {
+          "pan": {
+            "x": 0,
+            "y": 0
+          },
+          "zoom": 1
+        }
+      }
+    },
+    "29c50d941d483951811f3b7835214753fda61a0d": {
+      "package": {
+        "name": "Pulso",
+        "version": "0.0.1",
+        "description": "Generar un pulso de reloj al recibir un flanco por la entrada",
+        "author": "Juan Gonzalez-Gomez (obijuan)",
+        "image": "%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22113.803%22%20height=%2253.144%22%20viewBox=%220%200%20106.69049%2049.822719%22%3E%3Cdefs%3E%3Cmarker%20orient=%22auto%22%20id=%22a%22%20overflow=%22visible%22%3E%3Cpath%20d=%22M2.308%200l-3.46%202v-4l3.46%202z%22%20fill=%22red%22%20fill-rule=%22evenodd%22%20stroke=%22red%22%20stroke-width=%22.4pt%22/%3E%3C/marker%3E%3C/defs%3E%3Cpath%20d=%22M.95%2048.845H23.77V.938h23.513%22%20fill=%22none%22%20stroke=%22#00f%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22bevel%22/%3E%3Cpath%20d=%22M51.854%2025.07H67.05%22%20fill=%22none%22%20stroke=%22red%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22bevel%22%20marker-end=%22url(#a)%22/%3E%3Cpath%20d=%22M78.89%2048.845h10.205V.938h7.952v47.947h8.693%22%20fill=%22none%22%20stroke=%22#00f%22%20stroke-width=%222.813%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22bevel%22/%3E%3C/svg%3E"
+      },
+      "design": {
+        "graph": {
+          "blocks": [
+            {
+              "id": "e03aebf8-d678-4fb6-85d0-f432d1088579",
+              "type": "basic.input",
+              "data": {
+                "name": "",
+                "clock": true
+              },
+              "position": {
+                "x": 112,
+                "y": 104
+              }
+            },
+            {
+              "id": "f51a344a-ed04-44b2-b8f7-4757581a9c41",
+              "type": "8c5d8b238a335255daad3b21ec5bab77132f809e",
+              "position": {
+                "x": 272,
+                "y": 184
+              },
+              "size": {
+                "width": 96,
+                "height": 64
+              }
+            },
+            {
+              "id": "82344de0-7311-446c-a2b4-1255b8b77440",
+              "type": "7f3e9f0a05c929c3761852e259027fbe8e977795",
+              "position": {
+                "x": 416,
+                "y": 184
+              },
+              "size": {
+                "width": 96,
+                "height": 64
+              }
+            },
+            {
+              "id": "cc75f6b5-2f93-4c56-b3cf-f20192fc91de",
+              "type": "basic.input",
+              "data": {
+                "name": "",
+                "clock": false
+              },
+              "position": {
+                "x": 112,
+                "y": 200
+              }
+            },
+            {
+              "id": "671d911c-fa66-434c-a595-1851c64fa807",
+              "type": "b8ea79bbff55bda252ba410f1d9d84175e318b5b",
+              "position": {
+                "x": 576,
+                "y": 200
+              },
+              "size": {
+                "width": 96,
+                "height": 64
+              }
+            },
+            {
+              "id": "45e071c8-0736-4cc7-a166-d26e77775d33",
+              "type": "basic.output",
+              "data": {
+                "name": ""
+              },
+              "position": {
+                "x": 744,
+                "y": 200
+              }
+            },
+            {
+              "id": "9c7910b2-8c3f-4ba3-b07f-49ded7300c3d",
+              "type": "basic.info",
+              "data": {
+                "info": "Generacion de un pulso de un periodo de reloj (clk) cuando se recibe un\nflanco de subida por la entrada",
+                "readonly": false
+              },
+              "position": {
+                "x": 104,
+                "y": 336
+              },
+              "size": {
+                "width": 640,
+                "height": 96
+              }
+            }
+          ],
+          "wires": [
+            {
+              "source": {
+                "block": "f51a344a-ed04-44b2-b8f7-4757581a9c41",
+                "port": "f164a06d-b8e3-480d-b351-5d7d1e7ae3a2"
+              },
+              "target": {
+                "block": "82344de0-7311-446c-a2b4-1255b8b77440",
+                "port": "18c2ebc7-5152-439c-9b3f-851c59bac834"
+              },
+              "vertices": []
+            },
+            {
+              "source": {
+                "block": "82344de0-7311-446c-a2b4-1255b8b77440",
+                "port": "664caf9e-5f40-4df4-800a-b626af702e62"
+              },
+              "target": {
+                "block": "671d911c-fa66-434c-a595-1851c64fa807",
+                "port": "18c2ebc7-5152-439c-9b3f-851c59bac834"
+              },
+              "vertices": []
+            },
+            {
+              "source": {
+                "block": "e03aebf8-d678-4fb6-85d0-f432d1088579",
+                "port": "out"
+              },
+              "target": {
+                "block": "f51a344a-ed04-44b2-b8f7-4757581a9c41",
+                "port": "e85c1424-78de-4f24-a4bc-6a2901b26148"
+              }
+            },
+            {
+              "source": {
+                "block": "cc75f6b5-2f93-4c56-b3cf-f20192fc91de",
+                "port": "out"
+              },
+              "target": {
+                "block": "f51a344a-ed04-44b2-b8f7-4757581a9c41",
+                "port": "78ec5b41-e94f-4892-a7c5-42f2b4970c1b"
+              }
+            },
+            {
+              "source": {
+                "block": "671d911c-fa66-434c-a595-1851c64fa807",
+                "port": "664caf9e-5f40-4df4-800a-b626af702e62"
+              },
+              "target": {
+                "block": "45e071c8-0736-4cc7-a166-d26e77775d33",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "cc75f6b5-2f93-4c56-b3cf-f20192fc91de",
+                "port": "out"
+              },
+              "target": {
+                "block": "671d911c-fa66-434c-a595-1851c64fa807",
+                "port": "97b51945-d716-4b6c-9db9-970d08541249"
+              },
+              "vertices": [
+                {
+                  "x": 248,
+                  "y": 280
+                }
+              ]
+            }
+          ]
+        },
+        "state": {
+          "pan": {
+            "x": 0,
+            "y": 0
           },
           "zoom": 1
         }
@@ -1022,96 +1315,121 @@
         }
       }
     },
-    "7c0ae704fe4f7176c6e19f8639bc59e42c836297": {
+    "10d93310e23daeea6814d2c785127dcb17e7527b": {
       "package": {
-        "name": "Bomba_x1",
-        "version": "0.1",
-        "description": "Bombeo de bits. Una pulsación por segundo",
-        "author": "Juan Gonzalez (Obijuan)",
-        "image": "%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%22113.28%22%20height=%2281.27%22%20viewBox=%220%200%20106.20044%2076.190928%22%3E%3Ctext%20y=%22443.842%22%20x=%22-155.758%22%20style=%22line-height:125%25%22%20font-weight=%22400%22%20font-size=%2240.397%22%20font-family=%22sans-serif%22%20letter-spacing=%220%22%20word-spacing=%220%22%20fill=%22red%22%20transform=%22translate(238.359%20-394.146)%22%3E%3Ctspan%20style=%22-inkscape-font-specification:'sans-serif%20Bold'%22%20y=%22443.842%22%20x=%22-155.758%22%20font-weight=%22700%22%20font-size=%2223.084%22%3E1%3C/tspan%3E%3C/text%3E%3Cpath%20d=%22M40.85%2073.768c-1.314-2.254-3.351-4.461-7.211-7.812-2.091-1.815-3.363-2.823-10.605-8.401-5.676-4.373-8.508-6.799-11.79-10.101-3.28-3.302-5.208-5.932-6.862-9.361-1.056-2.19-1.782-4.3-2.234-6.492-.573-2.785-.651-3.728-.648-7.829.004-5.381.182-6.276%201.954-9.866%201.317-2.666%202.317-4.07%204.4-6.179C9.877%205.68%2011.19%204.75%2014.03%203.35c3.155-1.556%205.437-1.964%2010.138-1.813%203.653.118%204.99.48%207.886%202.142%204.558%202.615%208.095%206.813%209.074%2010.77.16.647.325%201.177.367%201.177.042%200%20.411-.757.82-1.682%201.392-3.145%202.685-5.064%204.739-7.038C53.343.86%2063.258-.233%2071.275%204.234c3.274%201.824%205.938%204.48%208.002%207.978%201.625%202.753%202.456%206.41%202.598%2011.433.205%207.277-1.13%2012.32-4.683%2017.694-1.41%202.133-2.453%203.425-4.409%205.461-3.156%203.287-6.002%205.703-12.721%2010.798-4.24%203.215-6.753%205.282-10.39%208.55-2.915%202.618-7.431%207.176-7.866%207.938-.19.333-.362.605-.382.605-.02%200-.278-.415-.574-.923z%22%20fill=%22red%22%20stroke=%22#000%22%20stroke-width=%223%22/%3E%3Cpath%20d=%22M77.277%2053.462h25.759%22%20fill=%22none%22%20stroke=%22red%22%20stroke-width=%223%22/%3E%3Ctext%20y=%22463.171%22%20x=%22-164.04%22%20style=%22line-height:125%25%22%20font-weight=%22400%22%20font-size=%2227.48%22%20font-family=%22sans-serif%22%20letter-spacing=%220%22%20word-spacing=%220%22%20fill=%22red%22%20transform=%22translate(238.359%20-394.146)%22%3E%3Ctspan%20style=%22-inkscape-font-specification:'sans-serif%20Bold'%22%20y=%22463.171%22%20x=%22-164.04%22%20font-weight=%22700%22%20font-size=%2215.703%22%3ESeg%3C/tspan%3E%3C/text%3E%3C/svg%3E"
+        "name": "Debouncer",
+        "version": "1.0.0",
+        "description": "Remove the rebound on a mechanical switch",
+        "author": "Juan González",
+        "image": "%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%22-252%20400.9%2090%2040%22%3E%3Cpath%20d=%22M-251.547%20436.672h22.802v-30.353h5.862v30.353h5.259v-30.353h3.447v30.353h2.984v-30.353h3.506v30.523h6.406V405.77h38.868%22%20fill=%22none%22%20stroke=%22#000%22%20stroke-width=%221.4%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Cpath%20d=%22M-232.57%20403.877l26.946%2032.391M-205.624%20403.877l-26.946%2032.391%22%20fill=%22none%22%20stroke=%22red%22%20stroke-width=%223%22%20stroke-linecap=%22round%22/%3E%3C/svg%3E"
       },
       "design": {
         "graph": {
           "blocks": [
             {
-              "id": "8709aff2-3586-4a6f-b6c5-d8751d3bc45d",
+              "id": "92490e7e-c3ba-4e9c-a917-2a771d99f1ef",
               "type": "basic.code",
               "data": {
-                "code": "//-- module bomba_x1(input wire clk, output wire clk_1hz)\n\n//-- Bombeo de bits a 1Hz (1 pulsacion por segundo)\n\n//-- Constante para dividir y obtener una frecuencia de 2Hz\nlocalparam M = 6000000;\n\n//-- Calcular el numero de bits para almacenar M\nlocalparam N = $clog2(M);\n\n//-- Registro del divisor\nreg [N-1:0] divcounter;\n\n//-- Contador modulo M. tras M pulsos de relog vuelve a 0\nalways @(posedge clk)\n  divcounter <= (divcounter == M - 1) ? 0 : divcounter + 1;\n\n//-- Obtener la señal de 2Hz. La señal no tiene ciclo del 50%\nwire clk_2hz;\nassign clk_2hz = divcounter[N-1]; \n\n//-- Usamos un biestable T para dividir entre 2 y obtener una señal\n//-- de 1Hz y ciclo del 50%\nreg T = 0;\nalways @(posedge clk_2hz)\n  T <= ~T;\n  \n//-- Señal de salida de 1Hz y ciclo del 50%\nassign clk_1hz = T;\n  \n//endmodule\n \n\n",
+                "code": "//-- Debouncer Circuit\n//-- It produces a stable output when the\n//-- input signal is bouncing\n\nreg btn_prev = 0;\nreg btn_out_r = 0;\n\nreg [16:0] counter = 0;\n\n\nalways @(posedge clk) begin\n\n  //-- If btn_prev and btn_in are differents\n  if (btn_prev ^ in == 1'b1) begin\n    \n      //-- Reset the counter\n      counter <= 0;\n      \n      //-- Capture the button status\n      btn_prev <= in;\n  end\n    \n  //-- If no timeout, increase the counter\n  else if (counter[16] == 1'b0)\n      counter <= counter + 1;\n      \n  else\n    //-- Set the output to the stable value\n    btn_out_r <= btn_prev;\n\nend\n\nassign out = btn_out_r;\n",
                 "params": [],
                 "ports": {
                   "in": [
                     {
                       "name": "clk"
+                    },
+                    {
+                      "name": "in"
                     }
                   ],
                   "out": [
                     {
-                      "name": "clk_1hz"
+                      "name": "out"
                     }
                   ]
                 }
               },
               "position": {
-                "x": 192,
-                "y": 24
+                "x": 264,
+                "y": 112
               },
               "size": {
-                "width": 592,
-                "height": 320
+                "width": 384,
+                "height": 256
               }
             },
             {
-              "id": "e19c6f2f-5747-4ed1-87c8-748575f0cc10",
+              "id": "4bf41c17-a2da-4140-95f7-2a80d51b1e1a",
               "type": "basic.input",
               "data": {
                 "name": "",
                 "clock": true
               },
               "position": {
-                "x": 0,
-                "y": 152
+                "x": 48,
+                "y": 144
               }
             },
             {
-              "id": "7e07d449-6475-4839-b43e-8aead8be2aac",
+              "id": "22ff3fa1-943b-4d1a-bd89-36e1c054d077",
               "type": "basic.output",
               "data": {
                 "name": ""
               },
               "position": {
-                "x": 856,
-                "y": 152
+                "x": 768,
+                "y": 208
+              }
+            },
+            {
+              "id": "c9e1af2a-6f09-4cf6-a5b3-fdf7ec2c6530",
+              "type": "basic.input",
+              "data": {
+                "name": "",
+                "clock": false
+              },
+              "position": {
+                "x": 48,
+                "y": 272
               }
             }
           ],
           "wires": [
             {
               "source": {
-                "block": "8709aff2-3586-4a6f-b6c5-d8751d3bc45d",
-                "port": "clk_1hz"
+                "block": "92490e7e-c3ba-4e9c-a917-2a771d99f1ef",
+                "port": "out"
               },
               "target": {
-                "block": "7e07d449-6475-4839-b43e-8aead8be2aac",
+                "block": "22ff3fa1-943b-4d1a-bd89-36e1c054d077",
                 "port": "in"
               }
             },
             {
               "source": {
-                "block": "e19c6f2f-5747-4ed1-87c8-748575f0cc10",
+                "block": "4bf41c17-a2da-4140-95f7-2a80d51b1e1a",
                 "port": "out"
               },
               "target": {
-                "block": "8709aff2-3586-4a6f-b6c5-d8751d3bc45d",
+                "block": "92490e7e-c3ba-4e9c-a917-2a771d99f1ef",
                 "port": "clk"
+              }
+            },
+            {
+              "source": {
+                "block": "c9e1af2a-6f09-4cf6-a5b3-fdf7ec2c6530",
+                "port": "out"
+              },
+              "target": {
+                "block": "92490e7e-c3ba-4e9c-a917-2a771d99f1ef",
+                "port": "in"
               }
             }
           ]
         },
         "state": {
           "pan": {
-            "x": 20,
-            "y": 0
+            "x": 0,
+            "y": -1
           },
           "zoom": 1
         }
